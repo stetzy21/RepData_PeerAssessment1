@@ -27,7 +27,8 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 
 
 ## Loading and preprocessing the data
-```{r echo=TRUE}
+
+```r
 library(data.table)
 
 # set the working directory
@@ -47,32 +48,56 @@ activityData <- fread(file="activity.csv")
 
 
 ## What is mean total number of steps taken per day?
-```{r echo=TRUE}
+
+```r
 # Sum the total steps taken per day
 dailySteps <- aggregate(steps ~ date, activityData, sum, na.action=na.omit)
 
 # plot histogram
 hist(dailySteps$steps, xlab="Number of Steps", main="Total Number of Steps Taken per Day", col="red")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
 # calculate the mean of the number of daily steps taken
 mean(dailySteps$steps, na.rm=TRUE)
+```
 
+```
+## [1] 10766.19
+```
+
+```r
 # calculate the median of the number of daily steps taken
 median(dailySteps$steps, na.rm=TRUE)
 ```
 
+```
+## [1] 10765
+```
+
 
 ## What is the average daily activity pattern?
-```{r, echo=TRUE}
+
+```r
 # calculate steps per interval
 stepsInterval <- aggregate(steps ~ interval, activityData, mean, na.action=na.omit)
 
 # plot the intervals
 plot(stepsInterval$interval, stepsInterval$steps, type="l", col="blue", xlab="Interval", 
      ylab="Average Number of Steps", main="Average Number of Steps Taken per 5-Minute Interval")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
 # Calculate the interval with the max amount of steps
 stepsInterval[which.max(stepsInterval$steps),1]
+```
+
+```
+## [1] 835
 ```
 
 
@@ -80,10 +105,18 @@ stepsInterval[which.max(stepsInterval$steps),1]
 
 
 ## Imputing missing values
-```{r, echo=TRUE}
+
+```r
 # calculate the number of missing values for each column
 print(sapply(activityData, function(x) sum(is.na(x))))
+```
 
+```
+##    steps     date interval 
+##     2304        0        0
+```
+
+```r
 # determine which indices are missing
 indexNA <- which(is.na(as.character(activityData$steps)))
 
@@ -105,10 +138,13 @@ dailySteps2 <- aggregate(steps ~ date, fillData, sum)
 hist(dailySteps2$steps, xlab="Number of Steps", main="Total Number of Steps Taken per Day", col="red")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r echo=TRUE}
+
+```r
 # change to date format
 fillData$date <- as.Date(fillData$date)
 
@@ -126,6 +162,8 @@ library(lattice)
 xyplot(stepsInterval2$steps ~ stepsInterval2$interval|stepsInterval2$dayType, xlab="Interval",
       ylab="Number of Steps", main="Average Steps per Day by Interval", layout=c(1,2), type="l", col="red")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 
 Activity is more evenly spread across the intervals on the weekends.
